@@ -38,21 +38,39 @@ except Exception as e:
 st.title("📊 Monitoramento Estratégico - Reclame Aqui")
 
 # --- SEÇÃO 1: MÉTRICAS RECLAME AQUI ---
-st.header("🎯 Índices de Reputação")
-col1, col2, col3, col4 = st.columns(4)
+st.header("🎯 Visão Geral do Atendimento")
 
+# Cálculos Base
 total_reclamacoes = len(df)
+total_avaliacoes = df['Nota do consumidor'].dropna().shape[0]
+total_usuarios = df['E-mail'].nunique() # Conta e-mails únicos para saber o real número de clientes
+resolvidas_abs = df[df['Seu problema foi resolvido?'] == 'Sim'].shape[0]
+voltariam_abs = df[df['Voltaria a fazer negócio?'] == 'Sim'].shape[0]
 respondidas = df[df['Status'].str.contains('Respondida', na=False, case=False)].shape[0]
-resolvidas = df[df['Seu problema foi resolvido?'] == 'Sim'].shape[0]
-voltariam = df[df['Voltaria a fazer negócio?'] == 'Sim'].shape[0]
-avaliadas = df['Nota do consumidor'].dropna().shape[0]
+
+# --- Linha 1: Números Absolutos ---
+st.subheader("📊 Volumes Totais")
+c1, c2, c3, c4 = st.columns(4)
+
+with c1:
+    st.metric("Total de Avaliações", total_avaliacoes, help=f"De um total de {total_reclamacoes} reclamações recebidas.")
+with c2:
+    st.metric("Usuários Únicos", total_usuarios, help="Calculado com base nos e-mails únicos da planilha.")
+with c3:
+    st.metric("Problemas Resolvidos", resolvidas_abs)
+with c4:
+    st.metric("Voltariam a Comprar", voltariam_abs)
+
+# --- Linha 2: Índices Percentuais ---
+st.subheader("🎯 Índices de Reputação")
+col1, col2, col3, col4 = st.columns(4)
 
 with col1:
     indice_resp = (respondidas / total_reclamacoes) * 100 if total_reclamacoes > 0 else 0
     st.metric("Índice de Resposta", f"{indice_resp:.1f}%", delta="Meta: 100%")
 
 with col2:
-    indice_solu = (resolvidas / avaliadas) * 100 if avaliadas > 0 else 0
+    indice_solu = (resolvidas_abs / total_avaliacoes) * 100 if total_avaliacoes > 0 else 0
     st.metric("Índice de Solução", f"{indice_solu:.1f}%", delta="Meta: > 90%")
 
 with col3:
@@ -60,7 +78,7 @@ with col3:
     st.metric("Média das Avaliações", f"{nota_media:.2f}/10")
 
 with col4:
-    indice_negocios = (voltariam / avaliadas) * 100 if avaliadas > 0 else 0
+    indice_negocios = (voltariam_abs / total_avaliacoes) * 100 if total_avaliacoes > 0 else 0
     st.metric("Novos Negócios", f"{indice_negocios:.1f}%")
 
 # --- SEÇÃO 2: ANÁLISE DE PARETO COM LINHA DE CORTE ---
