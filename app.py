@@ -8,7 +8,7 @@ st.set_page_config(page_title="Dashboard Reclame Aqui", layout="wide")
 # Carregamento de dados (substitua pelo nome do seu arquivo)
 @st.cache_data
 def load_data():
-    df = pd.read_csv("sua_planilha.csv") # Ou st.secrets para carregar do Google Sheets
+   df = pd.read_csv("dados.csv") # Ou st.secrets para carregar do Google Sheets
     # Tratamento de datas
     df['Data da entrada'] = pd.to_datetime(df['Data da entrada'], dayfirst=True)
     return df
