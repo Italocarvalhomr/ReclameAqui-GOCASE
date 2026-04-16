@@ -177,8 +177,9 @@ with col_b:
 st.markdown("---")
 st.header("🔔 Alerta de Blindagem de Nota")
 
-# Consideramos risco chamados não finalizados com mais de 2 dias de atraso
-risco_critico = df[(df['Status'] != 'Finalizada') & (df['Atraso_Dias'] > 2)].copy()
+
+# Alerta tudo que passou de 2 dias, exceto as "Respondidas"
+risco_critico = df[(df['Status'] != 'Respondida') & (df['Atraso_Dias'] > 2)].copy()
 
 if not risco_critico.empty:
     st.error(f"⚠️ Existem {len(risco_critico)} reclamações com mais de 48h em aberto. Elas têm alto risco de virarem detração pública!")
